@@ -1,0 +1,39 @@
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url(https://web.archive.org/web/20161107145340im_/https://fonts.gstatic.com/s/sourcesanspro/v9/toadOcfmlt9b38dHJxOBGNbE_oMaV8t2eFeISPpzbdE.woff) format('woff');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Sans Pro'), local('SourceSansPro-Regular'), url(https://web.archive.org/web/20161107145340im_/https://fonts.gstatic.com/s/sourcesanspro/v9/ODelI1aHBYDBqgeIAH2zlBM0YzuT7MdOe03otPbuUS0.woff) format('woff');
+}
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Source Sans Pro Semibold'), local('SourceSansPro-Semibold'), url(https://web.archive.org/web/20161107145340im_/https://fonts.gstatic.com/s/sourcesanspro/v9/toadOcfmlt9b38dHJxOBGJ6-ys_j0H4QL65VLqzI3wI.woff) format('woff');
+}
+
+/*
+     FILE ARCHIVED ON 14:53:40 Nov 07, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 16:20:39 Oct 30, 2025.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.895
+  exclusion.robots: 0.023
+  exclusion.robots.policy: 0.01
+  esindex: 0.014
+  cdx.remote: 19.107
+  LoadShardBlock: 277.022 (6)
+  PetaboxLoader3.datanode: 262.71 (8)
+  load_resource: 280.413 (2)
+  PetaboxLoader3.resolve: 132.53
+*/

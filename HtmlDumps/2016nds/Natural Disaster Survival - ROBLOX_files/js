@@ -1,0 +1,68 @@
+var _____WB$wombat$assign$function_____ = function(name) {return (self._wb_wombat && self._wb_wombat.local_init && self._wb_wombat.local_init(name)) || self[name]; };
+if (!self.__WB_pmw) { self.__WB_pmw = function(obj) { this.__WB_source = obj; return this; } }
+{
+  let window = _____WB$wombat$assign$function_____("window");
+  let self = _____WB$wombat$assign$function_____("self");
+  let document = _____WB$wombat$assign$function_____("document");
+  let location = _____WB$wombat$assign$function_____("location");
+  let top = _____WB$wombat$assign$function_____("top");
+  let parent = _____WB$wombat$assign$function_____("parent");
+  let frames = _____WB$wombat$assign$function_____("frames");
+  let opener = _____WB$wombat$assign$function_____("opener");
+
+Type.registerNamespace('Roblox.Website.Services.Secure');
+Roblox.Website.Services.Secure.LoginService=function() {
+Roblox.Website.Services.Secure.LoginService.initializeBase(this);
+this._timeout = 0;
+this._userContext = null;
+this._succeeded = null;
+this._failed = null;
+}
+Roblox.Website.Services.Secure.LoginService.prototype={
+_get_path:function() {
+ var p = this.get_path();
+ if (p) return p;
+ else return Roblox.Website.Services.Secure.LoginService._staticInstance.get_path();},
+ValidateLogin:function(userName,password,isCaptchaOn,challenge,captchaResponse,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'ValidateLogin',false,{userName:userName,password:password,isCaptchaOn:isCaptchaOn,challenge:challenge,captchaResponse:captchaResponse},succeededCallback,failedCallback,userContext); }}
+Roblox.Website.Services.Secure.LoginService.registerClass('Roblox.Website.Services.Secure.LoginService',Sys.Net.WebServiceProxy);
+Roblox.Website.Services.Secure.LoginService._staticInstance = new Roblox.Website.Services.Secure.LoginService();
+Roblox.Website.Services.Secure.LoginService.set_path = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_path(value); }
+Roblox.Website.Services.Secure.LoginService.get_path = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_path(); }
+Roblox.Website.Services.Secure.LoginService.set_timeout = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_timeout(value); }
+Roblox.Website.Services.Secure.LoginService.get_timeout = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_timeout(); }
+Roblox.Website.Services.Secure.LoginService.set_defaultUserContext = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_defaultUserContext(value); }
+Roblox.Website.Services.Secure.LoginService.get_defaultUserContext = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_defaultUserContext(); }
+Roblox.Website.Services.Secure.LoginService.set_defaultSucceededCallback = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_defaultSucceededCallback(value); }
+Roblox.Website.Services.Secure.LoginService.get_defaultSucceededCallback = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_defaultSucceededCallback(); }
+Roblox.Website.Services.Secure.LoginService.set_defaultFailedCallback = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_defaultFailedCallback(value); }
+Roblox.Website.Services.Secure.LoginService.get_defaultFailedCallback = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_defaultFailedCallback(); }
+Roblox.Website.Services.Secure.LoginService.set_enableJsonp = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_enableJsonp(value); }
+Roblox.Website.Services.Secure.LoginService.get_enableJsonp = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_enableJsonp(); }
+Roblox.Website.Services.Secure.LoginService.set_jsonpCallbackParameter = function(value) { Roblox.Website.Services.Secure.LoginService._staticInstance.set_jsonpCallbackParameter(value); }
+Roblox.Website.Services.Secure.LoginService.get_jsonpCallbackParameter = function() { return Roblox.Website.Services.Secure.LoginService._staticInstance.get_jsonpCallbackParameter(); }
+Roblox.Website.Services.Secure.LoginService.set_path("/Services/Secure/LoginService.asmx");
+Roblox.Website.Services.Secure.LoginService.ValidateLogin= function(userName,password,isCaptchaOn,challenge,captchaResponse,onSuccess,onFailed,userContext) {Roblox.Website.Services.Secure.LoginService._staticInstance.ValidateLogin(userName,password,isCaptchaOn,challenge,captchaResponse,onSuccess,onFailed,userContext); }
+
+
+}
+/*
+     FILE ARCHIVED ON 08:06:29 Apr 20, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 16:23:46 Oct 30, 2025.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.661
+  exclusion.robots: 0.021
+  exclusion.robots.policy: 0.009
+  esindex: 0.011
+  cdx.remote: 68.477
+  LoadShardBlock: 313.749 (6)
+  PetaboxLoader3.datanode: 298.644 (8)
+  PetaboxLoader3.resolve: 162.359 (4)
+  load_resource: 199.568 (2)
+*/
