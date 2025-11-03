@@ -1,0 +1,1 @@
+device/initialize is for checking what device is user using and if its banned or not allowed, the app will close. for getting through it just return {"success":true,"message":""}

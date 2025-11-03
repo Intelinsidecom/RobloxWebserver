@@ -1,7 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using Api.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("Default"),
+        npgsql => npgsql.MigrationsAssembly("Api")
+    )
+);
 var enableRequestLogging = builder.Configuration.GetValue<bool>("Features:EnableRequestLogging");
 if (enableRequestLogging)
 {
