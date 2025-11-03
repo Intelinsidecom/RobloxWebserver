@@ -1,0 +1,43 @@
+/* ~/CSS/Pages/Login/SignupOrLogInIframe.css */
+body {
+	background-color: white;
+}
+
+.signup-or-log-in-iframe {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	margin: auto;
+	height: auto;
+	background-color: white;
+}
+
+.signup-or-log-in-iframe h3 {
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+.signup-or-log-in-iframe h3.signup-header,
+.signup-or-log-in-iframe .login-header {
+	text-align: left;
+	padding: 5px 10px 20px 10px;
+	margin: 0;
+}
+
+.signup-or-log-in-iframe .close-button {
+	position: absolute;
+	right: 15px;
+	top: -0px;
+	font-size: 40px;
+	cursor: pointer;
+	color: #BBB;
+}
+
+.signup-or-log-in-iframe .close-button:hover {
+	color: #777;
+}
+
+.signup-or-log-in-iframe .rbx-login-partial {
+	box-shadow: none;
+	padding: 12px 5px 5px 5px;
+}

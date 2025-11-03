@@ -1,0 +1,11 @@
+@ecsv2_HostAddress = http://localhost:5260
+
+GET {{ecsv2_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{ecsv2_HostAddress}}/todos/1
+Accept: application/json
+
+###

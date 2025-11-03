@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ecsv2 Analytics Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        .log {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #e74c3c;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 3px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        .info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .view-analytics {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .view-analytics:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 ecsv2 Analytics Test Page</h1>
+        
+        <div class="info">
+            <strong>Test Instructions:</strong>
+            <ul>
+                <li>Fill in the form fields below</li>
+                <li>Each focus/blur event will send analytics to the ecsv2 service</li>
+                <li>Check the log below to see tracking requests</li>
+                <li>View collected analytics: <a href="http://localhost:5078/api/analytics" target="_blank" class="view-analytics">Open Analytics Dashboard</a></li>
+            </ul>
+        </div>
+
+        <form id="testForm" name="RollerCoasterSignupForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter password">
+            </div>
+            
+            <div class="form-group">
+                <label for="passwordConfirm">Confirm Password:</label>
+                <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm password">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter email">
+            </div>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <div class="log">
+            <h3>📊 Analytics Log:</h3>
+            <div id="logOutput"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated Roblox EventStream implementation
+        var Roblox = Roblox || {};
+        
+        Roblox.EventStream = {
+            baseUrl: 'http://localhost:5078',
+            
+            Init: function(url1, url2, studioUrl, diagnosticUrl) {
+                this.eventUrl = url1;
+                console.log('EventStream initialized:', url1);
+            },
+            
+            SendEvent: function(eventType, context, data) {
+                var params = new URLSearchParams({
+                    evt: eventType,
+                    ctx: context,
+                    url: window.location.href,
+                    lt: new Date().toISOString()
+                });
+                
+                // Add data fields to params
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        params.append(key, data[key]);
+                    }
+                }
+                
+                var trackingUrl = this.baseUrl + '/www/e.png?' + params.toString();
+                this.sendTracking(trackingUrl, eventType, context, data);
+            }
+        };
+        
+        Roblox.FormEvents = {
+            SendInteractionFocus: function(context, fieldName) {
+                var img = new Image();
+                var url = Roblox.EventStream.baseUrl + '/www/e.png?' + 
+                    'aType=focus&' +
+                    'field=' + encodeURIComponent(fieldName) + '&' +
+                    'evt=formInteraction&' +
+                    'ctx=' + encodeURIComponent(context) + '&' +
+                    'url=' + encodeURIComponent(window.location.href) + '&' +
+                    'lt=' + encodeURIComponent(new Date().toISOString());
+                
+                img.src = url;
+                logEvent('FOCUS', fieldName, url);
+            },
+            
+            SendInteractionOffFocus: function(context, fieldName) {
+                var img = new Image();
+                var url = Roblox.EventStream.baseUrl + '/www/e.png?' + 
+                    'aType=blur&' +
+                    'field=' + encodeURIComponent(fieldName) + '&' +
+                    'evt=formInteraction&' +
+                    'ctx=' + encodeURIComponent(context) + '&' +
+                    'url=' + encodeURIComponent(window.location.href) + '&' +
+                    'lt=' + encodeURIComponent(new Date().toISOString());
+                
+                img.src = url;
+                logEvent('BLUR', fieldName, url);
+            }
+        };
+        
+        // Initialize EventStream
+        Roblox.EventStream.Init(
+            "http://localhost:5078/www/e.png",
+            "http://localhost:5078/www/e.png",
+            "http://localhost:5078/pe?t=studio",
+            "http://localhost:5078/pe?t=diagnostic"
+        );
+        
+        // Function to log events to the page
+        function logEvent(action, field, url) {
+            var logOutput = document.getElementById('logOutput');
+            var entry = document.createElement('div');
+            entry.className = 'log-entry';
+            var timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = '<strong>' + timestamp + '</strong> - ' + action + ' on "' + field + '"';
+            logOutput.insertBefore(entry, logOutput.firstChild);
+            
+            console.log(action + ':', field, url);
+        }
+        
+        // Attach event listeners to form fields
+        document.addEventListener('DOMContentLoaded', function() {
+            var formContext = 'RollerCoasterSignupForm';
+            var inputs = document.querySelectorAll('input');
+            
+            inputs.forEach(function(input) {
+                input.addEventListener('focus', function() {
+                    Roblox.FormEvents.SendInteractionFocus(formContext, this.name);
+                });
+                
+                input.addEventListener('blur', function() {
+                    Roblox.FormEvents.SendInteractionOffFocus(formContext, this.name);
+                });
+            });
+            
+            // Handle form submission
+            document.getElementById('testForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                logEvent('SUBMIT', 'form', 'Form submitted (prevented default)');
+                alert('Form submission tracked! Check the analytics at: http://localhost:5078/api/analytics');
+            });
+            
+            // Log initial message
+            logEvent('READY', 'page', 'Analytics tracking initialized');
+        });
+    </script>
+</body>
+</html>
