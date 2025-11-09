@@ -42,6 +42,10 @@ public sealed class ThumbnailService : IThumbnailService
             throw new ArgumentException("Invalid base64 string provided", nameof(base64), ex);
         }
 
+        // Determine image format via magic bytes
+        // PNG: 89 50 4E 47 0D 0A 1A 0A; JPEG: FF D8 ... FF D9
+        string ext = IsPng(bytes) ? ".png" : (IsJpeg(bytes) ? ".jpg" : ".png");
+
         // Compute SHA256 hash of bytes
         string hash;
         using (var sha = SHA256.Create())
@@ -56,7 +60,7 @@ public sealed class ThumbnailService : IThumbnailService
         var outputDir = ResolveOutputDirectory(overrideOutputDirectory);
         Directory.CreateDirectory(outputDir);
 
-        var fileName = hash + ".png";
+        var fileName = hash + ext;
         var fullPath = Path.Combine(outputDir, fileName);
 
         if (File.Exists(fullPath))
@@ -91,7 +95,7 @@ public sealed class ThumbnailService : IThumbnailService
         };
     }
 
-    public async Task<string> RenderAvatarAsync(string type, long userId, int? x = null, int? y = null, CancellationToken cancellationToken = default)
+    public async Task<ThumbnailSaveResult> RenderAvatarAsync(string type, long userId, int? x = null, int? y = null, CancellationToken cancellationToken = default)
     {
         var arbiterUrl = _configuration?["Thumbnails:ArbiterUrl"] ?? "http://localhost:5000";
 
@@ -100,6 +104,12 @@ public sealed class ThumbnailService : IThumbnailService
         qb.Append("&userId=").Append(Uri.EscapeDataString(userId.ToString()));
         if (x.HasValue) qb.Append("&x=").Append(x.Value);
         if (y.HasValue) qb.Append("&y=").Append(y.Value);
+        // If a Website base URL is configured, pass it explicitly so Arbiter doesn't infer its own host
+        var websiteBase = _configuration?["Thumbnails:WebsiteBaseUrl"];
+        if (!string.IsNullOrWhiteSpace(websiteBase))
+        {
+            qb.Append("&baseUrl=").Append(Uri.EscapeDataString(websiteBase));
+        }
 
         var requestUri = arbiterUrl.TrimEnd('/') + "/renderavatar?" + qb.ToString();
 
@@ -155,7 +165,7 @@ public sealed class ThumbnailService : IThumbnailService
             throw new InvalidOperationException("Could not extract base64 PNG from Arbiter response. Raw: " + Trunc(json));
 
         var save = await SaveBase64PngAsync(base64!, null, cancellationToken).ConfigureAwait(false);
-        return save.Hash;
+        return save;
     }
 
     private string ResolveOutputDirectory(string? overrideOutputDirectory)
@@ -175,6 +185,21 @@ public sealed class ThumbnailService : IThumbnailService
     {
         if (s == null) return string.Empty;
         return s.Length <= max ? s : s.Substring(0, max);
+    }
+
+    private static bool IsPng(ReadOnlySpan<byte> bytes)
+    {
+        // 8-byte PNG signature
+        if (bytes.Length < 8) return false;
+        return bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47 &&
+               bytes[4] == 0x0D && bytes[5] == 0x0A && bytes[6] == 0x1A && bytes[7] == 0x0A;
+    }
+
+    private static bool IsJpeg(ReadOnlySpan<byte> bytes)
+    {
+        // JPEG starts with FF D8 and ends with FF D9 (we just check start)
+        if (bytes.Length < 2) return false;
+        return bytes[0] == 0xFF && bytes[1] == 0xD8;
     }
 }
 

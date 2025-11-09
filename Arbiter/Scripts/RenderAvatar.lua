@@ -1,6 +1,6 @@
 local jobId = %jobId%
 local type = %type%
-local format = "PNG"
+local format = "JPG"
 local x = %x%
 local y = %y%
 local baseUrl = "http://www.freblx.xyz"

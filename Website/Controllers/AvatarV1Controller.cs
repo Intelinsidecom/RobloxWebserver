@@ -50,8 +50,9 @@ public class AvatarV1Controller : ControllerBase
 
         try
         {
-            var hash = await _thumbnailService.RenderAvatarAsync(renderType, targetUserId, cancellationToken: cancellationToken);
-            // Compose full URL: base (config) + hash + ".png"
+            var save = await _thumbnailService.RenderAvatarAsync(renderType, targetUserId, cancellationToken: cancellationToken);
+            var hash = save.Hash;
+            // Compose full URL: base (config) + actual filename (png or jpg)
             var baseUrl = _configuration["Thumbnails:ThumbnailUrl"];
             if (string.IsNullOrWhiteSpace(baseUrl))
             {
@@ -59,18 +60,21 @@ public class AvatarV1Controller : ControllerBase
                 var host = Request.Host.HasValue ? Request.Host.Value : "localhost";
                 baseUrl = $"{scheme}://{host}/";
             }
-            var fullUrl = CombineUrl(baseUrl!, hash + ".png");
+            var fullUrl = CombineUrl(baseUrl!, save.FileName);
 
-            // Save to DB: users.thumbnail_url
+            // Persist URL based on type without raw SQL
             var connStr = _configuration.GetConnectionString("Default");
             if (!string.IsNullOrWhiteSpace(connStr))
             {
-                await using var conn = new NpgsqlConnection(connStr);
-                await conn.OpenAsync(cancellationToken);
-                await using var cmd = new NpgsqlCommand("update users set thumbnail_url = @u where user_id = @id", conn);
-                cmd.Parameters.AddWithValue("u", fullUrl);
-                cmd.Parameters.AddWithValue("id", targetUserId);
-                await cmd.ExecuteNonQueryAsync(cancellationToken);
+                if (renderType == "headshot")
+                {
+                    await ThumbnailQueries.SetUserHeadshotUrlAsync(connStr!, targetUserId, fullUrl, cancellationToken);
+                }
+                else if (renderType == "avatar")
+                {
+                    await ThumbnailQueries.SetUserThumbnailUrlAsync(connStr!, targetUserId, fullUrl, cancellationToken);
+                }
+                // 'full' does not update DB
             }
 
             return Ok(new { hash, thumbnail_url = fullUrl });

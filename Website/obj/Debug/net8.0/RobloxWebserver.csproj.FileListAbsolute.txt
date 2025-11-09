@@ -157,3 +157,8 @@ C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\obj\Debug\net8.0\RobloxW
 C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\obj\Debug\net8.0\ref\RobloxWebserver.dll
 C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\Thumbnails.dll
 C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\Thumbnails.pdb
+C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\System.Drawing.Common.dll
+C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\Intel\Documents\GitHub\RobloxWebserver\Website\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll

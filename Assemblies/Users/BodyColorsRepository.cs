@@ -38,7 +38,7 @@ set head_color = @head,
     left_leg_color = @lleg
 where user_id = @uid";
 
-            await using (var cmd = new NpgsqlCommand(sql, conn))
+            using (var cmd = new NpgsqlCommand(sql, conn))
             {
                 cmd.Parameters.AddWithValue("head", colors.HeadColorId);
                 cmd.Parameters.AddWithValue("torso", colors.TorsoColorId);
@@ -60,7 +60,7 @@ on conflict (user_id) do update set
   right_arm_color = excluded.right_arm_color,
   right_leg_color = excluded.right_leg_color,
   torso_color = excluded.torso_color";
-                    await using var up = new NpgsqlCommand(ins, conn);
+                    using var up = new NpgsqlCommand(ins, conn);
                     up.Parameters.AddWithValue("uid", userId);
                     up.Parameters.AddWithValue("head", colors.HeadColorId);
                     up.Parameters.AddWithValue("larm", colors.LeftArmColorId);

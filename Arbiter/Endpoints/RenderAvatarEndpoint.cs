@@ -29,7 +29,7 @@ namespace RCCArbiter.Endpoints
             switch ((type ?? string.Empty).Trim().ToLowerInvariant())
             {
                 case "headshot":
-                    defaultX = "450"; defaultY = "450"; break;
+                    defaultX = "1024"; defaultY = "1024"; break;
                 case "avatar":
                     defaultX = "420"; defaultY = "800"; break;
                 case "full":

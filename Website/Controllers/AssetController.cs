@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Text;
 using System.Threading.Tasks;
+using Users;
 
 namespace Website.Controllers
 {
@@ -20,7 +21,11 @@ namespace Website.Controllers
         // GET /Asset/characterfetch.ashx?player={id}
         [HttpGet("characterfetch.ashx")]
         public IActionResult CharacterFetchAshx([FromQuery] string? userId)
-            => CharacterFetchInternal(userId);
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest(new { error = "userId is required" });
+            return CharacterFetchInternal(userId);
+        }
 
         private IActionResult CharacterFetchInternal(string? userId)
         {
@@ -43,14 +48,21 @@ namespace Website.Controllers
         [HttpGet("BodyColors.ashx")]
         public async Task<IActionResult> BodyColors([FromQuery] long? userId)
         {
+            if (!userId.HasValue || userId.Value <= 0)
+                return BadRequest(new { error = "userId is required" });
+
             int head = 1, leftArm = 1, leftLeg = 1, rightArm = 1, rightLeg = 1, torso = 1;
-            var uid = userId.GetValueOrDefault(0);
+            var uid = userId.Value;
             var connStr = _configuration.GetConnectionString("Default");
 
-            if (uid > 0 && !string.IsNullOrWhiteSpace(connStr))
+            if (!string.IsNullOrWhiteSpace(connStr))
             {
                 try
                 {
+                    var exists = await UserQueries.UserExistsAsync(connStr, uid);
+                    if (!exists)
+                        return NotFound(new { error = "User not found" });
+
                     await using var conn = new NpgsqlConnection(connStr);
                     await conn.OpenAsync();
                     const string sql = @"select head_color, left_arm_color, left_leg_color, right_arm_color, right_leg_color, torso_color

@@ -9,7 +9,7 @@ namespace Users
         public bool success { get; set; }
     }
 
-    public static class UserQueries
+    public static partial class UserQueries
     {
         public static async Task<UsernameCheckResult> DoesUsernameExistAsync(string connectionString, string username)
         {
