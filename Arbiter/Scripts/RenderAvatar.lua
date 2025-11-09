@@ -42,18 +42,4 @@ print(("[%s] Rendering ..."):format(jobId))
 local result = game:GetService("ThumbnailGenerator"):Click(format, x, y, true)
 print(("[%s] Done!"):format(jobId))
 
-
-
--- Post the thumbnail to the upload endpoint
-print("[debug] posting thumbnail ...")
-local payload = HttpService:JSONEncode({
-    ['thumbnail'] = result,
-    ['userId'] = userId,
-    ['accessKey'] = accessKey,
-    ['type'] = type,
-    ['jobId'] = jobId,
-})
-local response = HttpService:PostAsync(uploadURL, payload, Enum.HttpContentType.TextPlain)
-print("[debug] post over")
-
-return response
+return result

@@ -5,6 +5,8 @@ using System.Security.Claims;
 using Npgsql;
 using Microsoft.AspNetCore.HttpOverrides;
 using Thumbnails;
+using Microsoft.AspNetCore.Authentication;
+using Website.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 // Thumbnails service
 builder.Services.AddSingleton<IThumbnailService>(sp => new ThumbnailService(sp.GetRequiredService<IConfiguration>()));
+
+// Minimal auth: use the ClaimsPrincipal you set from .ROBLOSECURITY as the auth source
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Passthrough";
+    options.DefaultChallengeScheme = "Passthrough";
+    options.DefaultSignInScheme = "Passthrough";
+})
+.AddScheme<AuthenticationSchemeOptions, PassthroughAuthHandler>("Passthrough", options => { });
 // Respect reverse proxy headers (e.g., Cloudflare) so Request.Scheme/IsHttps are accurate
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -107,6 +118,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Enable attribute-routed controllers (e.g., AuthGateController for /, /login, /newlogin)

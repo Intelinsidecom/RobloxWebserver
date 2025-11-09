@@ -50,8 +50,23 @@ public class LegacyThumbsController : ControllerBase
             {
                 try
                 {
-                    // Synchronously request render and persist resulting URL
-                    var hash = await _thumbnailService.RenderAvatarAsync("headshot", UserID);
+                    string renderType;
+                    switch (ThumbnailFormatID)
+                    {
+                        case 1:
+                            renderType = "headshot";
+                            break;
+                        case 2:
+                            renderType = "avatar";
+                            break;
+                        case 3:
+                            renderType = "full";
+                            break;
+                        default:
+                            renderType = "headshot";
+                            break;
+                    }
+                    var hash = await _thumbnailService.RenderAvatarAsync(renderType, UserID);
                     var baseUrl = _configuration["Thumbnails:ThumbnailUrl"];
                     if (string.IsNullOrWhiteSpace(baseUrl))
                     {

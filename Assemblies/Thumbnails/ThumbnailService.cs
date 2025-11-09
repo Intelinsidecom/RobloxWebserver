@@ -94,8 +94,6 @@ public sealed class ThumbnailService : IThumbnailService
     public async Task<string> RenderAvatarAsync(string type, long userId, int? x = null, int? y = null, CancellationToken cancellationToken = default)
     {
         var arbiterUrl = _configuration?["Thumbnails:ArbiterUrl"] ?? "http://localhost:5000";
-        var uploadUrl = _configuration?["Thumbnails:UploadUrl"] ?? "http://localhost:5077/api/thumbnails/upload";
-        var accessKey = _configuration?["Upload:AccessKey"] ?? string.Empty;
 
         var qb = new StringBuilder();
         qb.Append("type=").Append(Uri.EscapeDataString(type ?? "headshot"));
@@ -113,83 +111,51 @@ public sealed class ThumbnailService : IThumbnailService
 
         using var doc = JsonDocument.Parse(json);
 
+        // Extract base64 PNG from Arbiter response. Expected shapes:
+        // - Array of { type: "string", value: "<base64>" }
+        // - Object with { value: "<base64>" }
+        // - Raw string "<base64>"
+        string? base64 = null;
+
         if (doc.RootElement.ValueKind == JsonValueKind.Array)
         {
             var len = doc.RootElement.GetArrayLength();
             if (len == 0)
                 throw new InvalidOperationException("Unexpected response from Arbiter. Raw: " + Trunc(json));
 
+            // Walk from end to start to get the last value
             for (int i = len - 1; i >= 0; i--)
             {
                 var el = doc.RootElement[i];
-                string? val = null;
-                if (el.ValueKind == JsonValueKind.Object)
+                if (el.ValueKind == JsonValueKind.Object && el.TryGetProperty("value", out var vEl) && vEl.ValueKind == JsonValueKind.String)
                 {
-                    if (el.TryGetProperty("value", out var vEl) && vEl.ValueKind == JsonValueKind.String)
-                        val = vEl.GetString();
+                    base64 = vEl.GetString();
+                    if (!string.IsNullOrWhiteSpace(base64)) break;
                 }
                 else if (el.ValueKind == JsonValueKind.String)
                 {
-                    val = el.GetString();
-                }
-                if (string.IsNullOrWhiteSpace(val))
-                    continue;
-                try
-                {
-                    using var innerTry = JsonDocument.Parse(val!);
-                    var hashTry = innerTry.RootElement.TryGetProperty("hash", out var hElTry) ? hElTry.GetString() : null;
-                    if (!string.IsNullOrWhiteSpace(hashTry))
-                        return hashTry!;
-                }
-                catch (JsonException)
-                {
+                    base64 = el.GetString();
+                    if (!string.IsNullOrWhiteSpace(base64)) break;
                 }
             }
-            throw new InvalidOperationException("Unexpected response from Arbiter. Raw: " + Trunc(json));
         }
         else if (doc.RootElement.ValueKind == JsonValueKind.Object)
         {
-            if (doc.RootElement.TryGetProperty("hash", out var hEl) && hEl.ValueKind == JsonValueKind.String)
-            {
-                var direct = hEl.GetString();
-                if (!string.IsNullOrWhiteSpace(direct))
-                    return direct!;
-            }
             if (doc.RootElement.TryGetProperty("value", out var vEl) && vEl.ValueKind == JsonValueKind.String)
             {
-                var val = vEl.GetString();
-                if (!string.IsNullOrWhiteSpace(val))
-                {
-                    try
-                    {
-                        using var inner = JsonDocument.Parse(val!);
-                        var hash = inner.RootElement.TryGetProperty("hash", out var hEl2) ? hEl2.GetString() : null;
-                        if (!string.IsNullOrWhiteSpace(hash))
-                            return hash!;
-                    }
-                    catch (JsonException)
-                    {
-                    }
-                }
+                base64 = vEl.GetString();
             }
-            throw new InvalidOperationException("Unexpected response from Arbiter. Raw: " + Trunc(json));
         }
         else if (doc.RootElement.ValueKind == JsonValueKind.String)
         {
-            var val = doc.RootElement.GetString();
-            if (!string.IsNullOrWhiteSpace(val))
-            {
-                using var inner = JsonDocument.Parse(val!);
-                var hash = inner.RootElement.TryGetProperty("hash", out var hEl) ? hEl.GetString() : null;
-                if (!string.IsNullOrWhiteSpace(hash))
-                    return hash!;
-            }
-            throw new InvalidOperationException("Unexpected response from Arbiter. Raw(inner): " + Trunc(val ?? string.Empty));
+            base64 = doc.RootElement.GetString();
         }
-        else
-        {
-            throw new InvalidOperationException("Unexpected response from Arbiter. Raw: " + Trunc(json));
-        }
+
+        if (string.IsNullOrWhiteSpace(base64))
+            throw new InvalidOperationException("Could not extract base64 PNG from Arbiter response. Raw: " + Trunc(json));
+
+        var save = await SaveBase64PngAsync(base64!, null, cancellationToken).ConfigureAwait(false);
+        return save.Hash;
     }
 
     private string ResolveOutputDirectory(string? overrideOutputDirectory)
